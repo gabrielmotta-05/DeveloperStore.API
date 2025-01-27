@@ -31,16 +31,25 @@ namespace DeveloperStore.API.Services
                 // Calcular o valor total do item
                 item.TotalValue = item.Quantity * item.UnitPrice;
 
-                // Aplicar desconto por item
-                if (item.Quantity > 10)
+                if (item.Quantity >= 4 && item.Quantity <= 9)
                 {
                     item.Discount = item.TotalValue * 0.10m; // 10% de desconto
                     _logger.LogInformation($"Desconto de 10% aplicado no item {item.ProductId}.");
+                }
+                else if (item.Quantity >= 10 && item.Quantity <= 20)
+                {
+                    item.Discount = item.TotalValue * 0.20m; // 20% de desconto
+                    _logger.LogInformation($"Desconto de 20% aplicado no item {item.ProductId}.");
+                }
+                else if (item.Quantity > 20)
+                {
+                    throw new InvalidOperationException("Não é possível vender mais de 20 itens de um mesmo produto.");
                 }
                 else
                 {
                     item.Discount = 0;
                 }
+
 
                 // Acumular os valores
                 totalValue += item.TotalValue;

@@ -1,8 +1,8 @@
 ﻿using DeveloperStore.API.Models;
 using DeveloperStore.API.Requests;
+using DeveloperStore.API.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace DeveloperStore.API.Controllers
 {
@@ -12,11 +12,13 @@ namespace DeveloperStore.API.Controllers
     {
         private readonly IMediator _mediator;
         private readonly ILogger<SaleController> _logger;
+        private readonly SaleService _saleService;
 
-        public SaleController(IMediator mediator, ILogger<SaleController> logger)
+        public SaleController(IMediator mediator, ILogger<SaleController> logger, SaleService saleService)
         {
             _mediator = mediator;
             _logger = logger;
+            _saleService = saleService;
         }
 
         // POST: api/Sale
