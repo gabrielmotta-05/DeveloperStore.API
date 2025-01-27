@@ -6,6 +6,8 @@
         public DateTime SaleDate { get; set; }
         public string Customer { get; set; }
         public decimal TotalValue { get; set; }
+        public decimal Discount { get; set; }
+
         public string Branch { get; set; }
         public List<SaleItem> Items { get; set; }
     }

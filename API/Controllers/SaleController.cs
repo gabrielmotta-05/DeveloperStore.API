@@ -1,8 +1,8 @@
-﻿using DeveloperStore.API.Data;
-using DeveloperStore.API.Models;
-using DeveloperStore.API.Services;
+﻿using DeveloperStore.API.Models;
+using DeveloperStore.API.Requests;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace DeveloperStore.API.Controllers
 {
@@ -10,48 +10,61 @@ namespace DeveloperStore.API.Controllers
     [ApiController]
     public class SaleController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-        private readonly SaleService _saleService;
+        private readonly IMediator _mediator;
+        private readonly ILogger<SaleController> _logger;
 
-        public SaleController(ApplicationDbContext context, SaleService saleService)
+        public SaleController(IMediator mediator, ILogger<SaleController> logger)
         {
-            _context = context;
-            _saleService = saleService;
+            _mediator = mediator;
+            _logger = logger;
         }
 
         // POST: api/Sale
-        //Cria uma nova venda e calcula o valor total e descontos.
         [HttpPost]
         public async Task<IActionResult> CreateSale([FromBody] Sale sale)
         {
+            _logger.LogInformation("Iniciando criação de venda.");
+
             if (sale == null || sale.Items == null || !sale.Items.Any())
             {
+                _logger.LogWarning("A venda não contém itens.");
                 return BadRequest("A venda deve ter pelo menos 1 item.");
             }
 
-            // Calculando os valores da venda e aplicando as regras de negócio
-            var calculatedSale = _saleService.CalculateSale(sale);
-
-            // Adicionando a venda no banco de dados
-            _context.Sales.Add(calculatedSale);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetSale", new { id = calculatedSale.Id }, calculatedSale);
+            try
+            {
+                var createdSale = await _mediator.Send(new CreateSaleRequest(sale));
+                _logger.LogInformation($"Venda criada com sucesso. Id: {createdSale.Id}");
+                return CreatedAtAction(nameof(GetSale), new { id = createdSale.Id }, createdSale);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao criar a venda.");
+                return StatusCode(500, "Erro interno do servidor.");
+            }
         }
 
         // GET: api/Sale/5
-        //Retorna os detalhes de uma venda existente, incluindo seus itens.
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSale(int id)
         {
-            var sale = await _context.Sales.Include(s => s.Items).FirstOrDefaultAsync(s => s.Id == id);
+            _logger.LogInformation($"Buscando venda com ID {id}.");
 
-            if (sale == null)
+            try
             {
-                return NotFound();
+                var sale = await _mediator.Send(new GetSaleByIdRequest(id));
+                return Ok(sale);
             }
-
-            return Ok(sale);
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning($"Venda com ID {id} não encontrada.");
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao buscar a venda.");
+                return StatusCode(500, "Erro interno do servidor.");
+            }
         }
     }
 }

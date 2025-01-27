@@ -1,37 +1,58 @@
 ﻿using DeveloperStore.API.Models;
-using System;
-using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace DeveloperStore.API.Services
 {
     public class SaleService
     {
+        private readonly ILogger<SaleService> _logger;
+
+        public SaleService(ILogger<SaleService> logger)
+        {
+            _logger = logger;
+        }
+
         public Sale CalculateSale(Sale sale)
         {
-            decimal totalAmount = 0;
+            _logger.LogInformation("Iniciando cálculo de venda.");
+
+            // Validar se a venda possui itens
+            if (sale.Items == null || !sale.Items.Any())
+            {
+                _logger.LogWarning("A venda não contém itens.");
+                throw new InvalidOperationException("A venda deve conter ao menos um item.");
+            }
+
+            decimal totalValue = 0;
+            decimal totalDiscount = 0;
+
             foreach (var item in sale.Items)
             {
-                // Aplicando as regras de desconto conforme a quantidade
-                if (item.Quantity >= 4 && item.Quantity <= 9)
+                // Calcular o valor total do item
+                item.TotalValue = item.Quantity * item.UnitPrice;
+
+                // Aplicar desconto por item
+                if (item.Quantity > 10)
                 {
-                    item.Discount = 0.10m;  // 10% de desconto
-                }
-                else if (item.Quantity >= 10 && item.Quantity <= 20)
-                {
-                    item.Discount = 0.20m;  // 20% de desconto
+                    item.Discount = item.TotalValue * 0.10m; // 10% de desconto
+                    _logger.LogInformation($"Desconto de 10% aplicado no item {item.ProductId}.");
                 }
                 else
                 {
-                    item.Discount = 0m;  // Nenhum desconto
+                    item.Discount = 0;
                 }
 
-                // Calculando o total por item
-                item.TotalValue = item.Quantity * item.UnitPrice * (1 - item.Discount);
-                totalAmount += item.TotalValue;
+                // Acumular os valores
+                totalValue += item.TotalValue;
+                totalDiscount += item.Discount;
             }
 
-            // Calculando o valor total da venda
-            sale.TotalValue = totalAmount;
+            // Calcular o valor total da venda
+            sale.TotalValue = totalValue - totalDiscount;
+            sale.Discount = totalDiscount;
+
+            _logger.LogInformation($"Venda calculada com sucesso. Total: {sale.TotalValue}, Desconto total: {sale.Discount}");
+
             return sale;
         }
     }
