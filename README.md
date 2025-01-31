@@ -91,3 +91,60 @@ Microsoft Logging (Sistema de logs)
 Este projeto está sob a licença MIT. Sinta-se à vontade para usá-lo e modificá-lo!
 
 📧 Contato: Caso tenha dúvidas ou sugestões, abra uma issue no repositório!
+
+# 📦 Gerenciamento de Dependências no .NET
+
+Este documento descreve como gerenciar e restaurar as dependências do projeto .NET.
+
+## 🔄 Restaurar Dependências
+Se você acabou de clonar o projeto, execute o seguinte comando para restaurar as dependências:
+```bash
+dotnet restore
+```
+Isso baixará todos os pacotes necessários definidos no arquivo `.csproj`.
+
+## 📥 Adicionar Novas Dependências
+Caso precise adicionar um novo pacote ao projeto:
+- **Para o projeto principal**:
+  ```bash
+  dotnet add package NomeDoPacote
+  ```
+- **Para o projeto de testes**:
+  ```bash
+  dotnet add DeveloperStore.API.Tests package NomeDoPacote
+  ```
+
+## 🔄 Atualizar Dependências
+Para verificar e atualizar pacotes existentes:
+- **Listar pacotes instalados**:
+  ```bash
+  dotnet list package
+  ```
+- **Atualizar pacotes desatualizados**:
+  ```bash
+  dotnet outdated
+  ```
+  ```bash
+  dotnet add package NomeDoPacote --version X.Y.Z
+  ```
+
+Se `dotnet-outdated` não estiver instalado, instale com:
+```bash
+dotnet tool install --global dotnet-outdated-tool
+```
+
+## 📌 Fixar Versão do .NET
+Para garantir que todos os desenvolvedores utilizem a mesma versão do SDK, crie um arquivo `global.json` na raiz do projeto:
+```json
+{
+  "sdk": {
+    "version": "8.0.100"
+  }
+}
+```
+Isso evita inconsistências entre ambientes de desenvolvimento.
+
+## 🎯 Conclusão
+Seguindo essas instruções, você poderá gerenciar dependências de forma eficiente e manter seu ambiente de desenvolvimento alinhado com o restante da equipe.
+
+
