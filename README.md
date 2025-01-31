@@ -1,78 +1,93 @@
-# DeveloperStore API
+DeveloperStore.API
 
-Este repositório contém a implementação de uma API para gerenciamento de vendas, com funcionalidades de criação, consulta e cálculo de vendas, utilizando os princípios de **Domain-Driven Design (DDD)**.
+📌 Visão Geral
 
-## Índice
+A DeveloperStore.API é um serviço para gerenciamento de vendas, permitindo cálculos de descontos automáticos com base na quantidade de itens comprados.
 
-- [Visão Geral](#visão-geral)
-- [Requisitos](#requisitos)
-- [Tecnologias Utilizadas](#tecnologias-utilizadas)
-- [Estrutura do Projeto](#estrutura-do-projeto)
-- [Endpoints da API](#endpoints-da-api)
-- [Execução do Projeto](#execução-do-projeto)
-- [Testes](#testes)
-- [Como Contribuir](#como-contribuir)
+🚀 Funcionalidades
 
-## Visão Geral
+📦 Gerenciamento de Vendas: Permite calcular o total da venda e aplicar descontos.
 
-A API oferece um CRUD completo para a gestão de vendas. As vendas podem ser criadas, recuperadas e atualizadas. A API também inclui o cálculo de valores, descontos e outros detalhes relacionados às vendas.
+🏷️ Descontos Automáticos:
 
-As principais regras de negócio para o cálculo das vendas são:
-- Vendas acima de 4 itens do mesmo produto têm 10% de desconto.
-- Vendas entre 10 e 20 itens do mesmo produto têm 20% de desconto.
-- Não é possível vender mais de 20 itens do mesmo produto.
-- Vendas com menos de 4 itens não recebem desconto.
+10% para compras entre 4 e 9 itens.
 
-## Requisitos
+20% para compras entre 10 e 20 itens.
 
-- **.NET Core 6.0** ou superior
-- **PostgreSQL** ou **MongoDB** (dependendo de sua escolha para o banco de dados)
-- **MediatR** para gerenciamento de comandos e consultas
-- **AutoMapper** para mapeamento de objetos
-- **Rebus** para comunicação assíncrona
-- **xUnit** para testes de unidade
-- **Postman** ou ferramenta similar para testes manuais de CRUD
+Venda de mais de 20 itens é bloqueada.
 
-## Tecnologias Utilizadas
+🔍 Logs de Monitoramento: O sistema utiliza logging para rastrear eventos importantes.
 
-- **C#**
-- **ASP.NET Core** para a criação da API
-- **Entity Framework Core** (EF Core) para mapeamento objeto-relacional
-- **MediatR** para mediadores de comandos e consultas
-- **AutoMapper** para mapeamento de objetos
-- **Rebus** para gerenciamento de eventos e mensagens assíncronas
-- **PostgreSQL** ou **MongoDB** (banco de dados)
+✅ Testes Unitários: Implementados usando xUnit e Moq.
 
-## Estrutura do Projeto
+🏗️ Arquitetura
 
-O projeto está organizado da seguinte forma:
+O projeto segue a estrutura Clean Architecture, com separação clara entre camadas:
 
-- **API**: Contém os controladores da API e os serviços.
-- **Models**: Contém os modelos de dados utilizados na aplicação.
-- **Requests**: Contém os objetos que representam os comandos de consulta e criação.
-- **Services**: Contém a lógica de negócios e serviços auxiliares.
-- **Migrations**: Contém as migrações do banco de dados para PostgreSQL.
-- **Tests**: Contém os testes de unidade utilizando xUnit.
+DeveloperStore.API
+│-- Controllers
+│-- Models
+│-- Services
+│-- Tests
 
-## Endpoints da API
+Controllers → Gerenciam as requisições HTTP.
 
-### Criar Venda
+Models → Contém os objetos de domínio da aplicação.
 
-- **POST /api/sale**
-- Descrição: Cria uma nova venda.
-- Body:
-  ```json
-  {
-    "saleNumber": "12345",
-    "saleDate": "2025-01-01T10:00:00",
-    "customer": "Customer A",
-    "totalAmount": 100.00,
-    "branch": "Branch A",
-    "items": [
-      {
-        "productId": "1",
-        "quantity": 5,
-        "unitPrice": 10.00
-      }
-    ]
-  }
+Services → Contém a lógica de negócios.
+
+Tests → Projeto separado para testes unitários.
+
+📦 Como Configurar o Projeto
+
+1️⃣ Restaurar Dependências
+
+Após clonar o repositório, execute:
+
+dotnet restore
+
+Isso instalará todas as dependências necessárias.
+
+2️⃣ Rodar a API
+
+Para iniciar o servidor:
+
+dotnet run --project DeveloperStore.API
+
+A API estará disponível em http://localhost:5000 (ou na porta configurada).
+
+3️⃣ Executar os Testes
+
+Para validar se o código está funcionando corretamente:
+
+dotnet test
+
+🤝 Contribuindo
+
+Faça um Fork do repositório.
+
+Crie uma Branch para sua feature:
+
+git checkout -b minha-feature
+
+Implemente as alterações e commit:
+
+git commit -m "Descrição da feature"
+
+Envie um Pull Request para revisão.
+
+🛠️ Tecnologias Utilizadas
+
+.NET 8
+
+xUnit (Testes Unitários)
+
+Moq (Mocks para testes)
+
+Microsoft Logging (Sistema de logs)
+
+📄 Licença
+
+Este projeto está sob a licença MIT. Sinta-se à vontade para usá-lo e modificá-lo!
+
+📧 Contato: Caso tenha dúvidas ou sugestões, abra uma issue no repositório!
